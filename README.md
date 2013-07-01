@@ -1,4 +1,3 @@
-buptnewbie
-==========
+#newbie's personal blog on Github
 
-Set my own homepage--http://buptnewbie.github.com/
+This is a personal [blog](http://buptnewbie.github.com/)
