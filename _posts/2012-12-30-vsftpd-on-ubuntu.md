@@ -89,7 +89,7 @@ vsftpd的配置文件在`/etc/vsftpd.conf`中，各种用法实际上都包含�
         data_connection_timeout=120
 
         # 很明显，欢迎信息
-        ftpd_banner=Welcome to Pixy's FTP Server.
+        ftpd_banner=Welcome to Newbie's FTP Server.
 
         # 限制本地用户只能访问自己的home文件夹，安全机制
         chroot_local_user=YES
