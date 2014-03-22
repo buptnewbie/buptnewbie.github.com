@@ -19,7 +19,7 @@ tags: [git, gitweb, apache, ssh, linux, gitolite]
 
 在利用apache建立各种web服务时，笔者遇到了一个关于Linux中的用户权限交叉问题，包括先前较早建立的svn服务器，gitweb也同样如此。
 
-- apache使用的用户为www-data，名字很怪。总的来说，如果需要web服务（下称apache）获取到诸如svn服务器所需要的仓库内容或者是gitweb服务所需要的git目录，一定需要将www-data用户加入svn或者git用户所在的用户组，并且对所要读取的目录添加`g+r`的基本权限（注意目录需要`g+rx`）[^1]。
+- apache使用的用户为www-data，名字很怪。总的来说，如果需要web服务（下称apache）获取到诸如svn服务器所需要的仓库内容或者是gitweb服务所需要的git目录，一定需要将www-data用户加入svn或者git用户所在的用户组，通过`usermod -a -G git www-data`实现，并且对所要读取的目录添加`g+r`的基本权限（注意目录需要`g+rx`）[^1]，通过`chmod -R g+rx /home/git/repositories`实现。
 
 - 由于git使用SSH认证，ssh对git用户的`~/.ssh/`目录及其各级父目录的权限有严格的要求，必须为`go-w`：
 
@@ -40,7 +40,14 @@ tags: [git, gitweb, apache, ssh, linux, gitolite]
         $ sudo apt-get install apache2,gitweb
 {% endhighlight %}
 
-- 在 `/etc/apache2/conf.d/gitweb` 文件中加入：
+-   安装Apache2和Gitweb后会在系统中创建一下文件：
+    -   配置文件：/etc/gitweb.conf
+	-   Apache配置文件：/etc/apache2/conf.d/gitweb
+	-   CGI脚本：/usr/share/gitweb/index.cgi -> gitweb.cgi
+	-   图片和css等
+	其中配置文件 /etc/apaches/conf.d/gitweb 用于完成和Web服务器Apache2的整合。
+
+- 在 /etc/apache2/conf.d/gitweb 文件中添加如下配置，重启Apache后，既可以用网址/git来访问Gitweb服务。
 
         Alias /git /usr/share/gitweb     #这里表示服务器url http://host/git/ 代表服务器中的 /usr/share/gitweb 目录
         <Directory /usr/share/gitweb>
@@ -51,7 +58,7 @@ tags: [git, gitweb, apache, ssh, linux, gitolite]
         Allow from all
         </Directory>
 
-- 在 /etc/gitweb.conf 文件中修改git根目录等信息：
+- 编辑 /etc/gitweb.conf ，更改Gitweb的默认设置：
 
         # path to git projects (<project>.git)
         $projectroot = "/home/git/repositories/";
